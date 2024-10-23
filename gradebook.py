@@ -1,5 +1,4 @@
 import customtkinter
-import numpy as np
 import json
 import os
 
@@ -7,7 +6,7 @@ customtkinter.set_appearance_mode("dark")
 customtkinter.set_default_color_theme("dark-blue")
 
 root = customtkinter.CTk()
-root.geometry("2025x1080")
+root.geometry("1920x1080")
 
 data_file = "user_data.json"  # JSON file to save data
 
@@ -89,7 +88,7 @@ def createClass():
         #Header for different fields
         classGradeTypeHeader = customtkinter.CTkLabel(master=classFrame, text="Grade name (optional)" , font=("Inter Medium", 11))
         classGradeHeader = customtkinter.CTkLabel(master=classFrame, text="Grade", font=("Inter Medium", 11))
-        classGradeWeightHeader = customtkinter.CTkLabel(master=classFrame, text="Grade weight in percentage form \n ie. 75% = 75", font=("Inter Medium", 11))
+        classGradeWeightHeader = customtkinter.CTkLabel(master=classFrame, text="Grade weight\n(%)", font=("Inter Medium", 11))
         classFrameColumns = 0
         #Button to calculate average
         calculateAverageButton = customtkinter.CTkButton(master=classFrame, text="Calculate", text_color = "white",  font=("Inter Medium", 11),
@@ -99,7 +98,7 @@ def createClass():
         for i in range(5):
             row_entries = []
             #Create them
-            gradeCategory = customtkinter.CTkEntry(master = classFrame, font=("Inter Medium", 11))
+            gradeCategory = customtkinter.CTkEntry(master = classFrame, font=("Inter Medium", 11), width = 100)
             grade = customtkinter.CTkEntry(master = classFrame, placeholder_text="Grade", width = 50,font=("Inter Medium", 11), validate="key", validatecommand=(root.register(validate_number_input), "%S")) #Makes sure input is a number only
             gradeWeight = customtkinter.CTkEntry(master = classFrame, placeholder_text="Weight", width = 50, font=("Inter Medium", 11), validate="key", validatecommand=(root.register(validate_number_input), "%S")) #Makes sure input is a number only
 
@@ -111,23 +110,23 @@ def createClass():
             classArray.append(row_entries)
 
             #Put them on the screen
-            gradeCategory.grid(row = classFrameColumns + 2, column = 0, padx = 10, pady = 20)
-            grade.grid(row = classFrameColumns + 2, column = 1, padx = 10, pady = 20)
-            gradeWeight.grid(row = classFrameColumns + 2, column = 2, padx = 10, pady = 20)
+            gradeCategory.grid(row = classFrameColumns + 2, column = 0, padx = 5, pady = 7)
+            grade.grid(row = classFrameColumns + 2, column = 1, padx = 5, pady = 7)
+            gradeWeight.grid(row = classFrameColumns + 2, column = 2, padx = 5, pady = 7)
             
             #Increment column Amount(i)
             classFrameColumns += 1
         #Show class name entry  field
         className.grid(row = 0, column = 0, columnspan = 3, padx= 10, pady = 10, sticky="ew")
         #Show header for entry fields
-        classGradeTypeHeader.grid(row = 1, column = 0, padx= 10, pady = 10)
-        classGradeHeader.grid(row = 1, column = 1, padx= 10, pady = 10)
-        classGradeWeightHeader.grid(row = 1, column = 2, padx= 10, pady = 10)
+        classGradeTypeHeader.grid(row = 1, column = 0, padx= 5, pady = 10)
+        classGradeHeader.grid(row = 1, column = 1, padx= 5, pady = 10)
+        classGradeWeightHeader.grid(row = 1, column = 2, padx= 5, pady = 10)
         #Show text for averages
         classAverageText = customtkinter.CTkLabel(master = classFrame, text = "Class Average:", font=("Inter Medium", 15))
         classAverage = customtkinter.CTkLabel(master = classFrame, text = "0.0", font=("Inter Medium", 15))
-        classAverageText.grid(row = classFrameColumns + 3, column = 1, padx = 10, pady = 20)
-        classAverage.grid(row = classFrameColumns + 3, column = 2, padx = 10, pady = 20)
+        classAverageText.grid(row = classFrameColumns + 3, column = 1, padx = 10, pady = 10)
+        classAverage.grid(row = classFrameColumns + 3, column = 2, padx = 10, pady = 10)
         #Show button to calculate average
         calculateAverageButton.grid(row = classFrameColumns + 3, column = 0, padx = 10, pady = 20)
         #Put the 2d array of entry fields into a larger array
@@ -189,7 +188,7 @@ load_data()
 
 #add total GPA label
 totalGPA = customtkinter.CTkLabel(master = root, text = "GPA unweighted: 0.0", text_color = "white",  font=("Inter Medium", 25),)
-totalGPA.place(relx = .50, rely = .90, anchor = "s")
+totalGPA.place(relx = .50, rely = .925, anchor = "s")
 
 #Calculate total GPA button
 def calcTotalGPA():
@@ -204,20 +203,18 @@ def calcTotalGPA():
 addClassButton = customtkinter.CTkButton(master=root, text="Add", text_color = "white",  font=("Inter Medium", 11),
                                         fg_color= "#97D8C3", hover_color = "#56B782", corner_radius = 5, width = 75,
                                         height = 30, command = createClass)
-addClassButton.place(relx=0.40, rely = .95, anchor = "s")
+addClassButton.place(relx=0.40, rely = .975, anchor = "s")
 
 #Calculate total GPA button
 totalGPAButton = customtkinter.CTkButton(master=root, text="Calculate GPA", text_color = "white",  font=("Inter Medium", 11),
                                         fg_color= "#68B3E3", hover_color = "#4A9DC6", corner_radius = 5, width = 75,
                                         height = 30, command = calcTotalGPA)
-totalGPAButton.place(relx = .50, rely = .95, anchor = "s")
+totalGPAButton.place(relx = .50, rely = .975, anchor = "s")
 #delete class button 
 deleteClassButton = customtkinter.CTkButton(master=root, text="Delete", text_color = "white",  font=("Inter Medium", 11),
                                         fg_color= "#FFB3B3", hover_color = "#FF6666", corner_radius = 5, width = 75,
                                         height = 30, command = deleteClass)
-deleteClassButton.place(relx=0.60, rely = .95, anchor = "s")
+deleteClassButton.place(relx=0.60, rely = .975, anchor = "s")
 
-#can't change size of window
-root.resizable(False, False)
 #Hurray!
 root.mainloop()
