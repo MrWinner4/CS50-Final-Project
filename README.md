@@ -1,7 +1,7 @@
 # GRADEBOOK
 #### Video Demo:  <https://youtu.be/VmKcy3PQ7kQ>
 
-### Download Video: <https://drive.google.com/file/d/1OVo-WhFrkLTmxYtxiiKT5n-HvvlLXk8r/view?usp=sharing>
+#### Download Mac: <https://drive.google.com/file/d/1OVo-WhFrkLTmxYtxiiKT5n-HvvlLXk8r/view?usp=sharing>
 
 ## What does it do?
 #### Well, the gradebook sounds exactly like what it is: it's a gradebook. It keeps track of grades, calculates averages, and calculates your total GPA. While most schools provide this, my school has recently stopped providing the ability to calculate the total average, and I have been doing it with spreadsheets, which was getting old. It was one of my first ideas for this project, and I think I will be able to use it in life quite a bit!
