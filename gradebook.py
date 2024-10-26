@@ -1,14 +1,33 @@
 import customtkinter
 import json
 import os
+import sys
+from pathlib import Path
+
+def get_data_path():
+    app_name = "Gradebook"
+    app_support_dir = Path.home() / "Library" / "Application Support" / app_name
+    app_support_dir.mkdir(parents=True, exist_ok=True)
+    return app_support_dir / "user_data.json"
+
+
+
+# Update the path for JSON file
+json_file_path = get_data_path()
+print(f"Using JSON file path: {json_file_path}")
+print(f"Checking if JSON file exists: {os.path.exists(json_file_path)}")
+
+
+
+
+
+
 
 customtkinter.set_appearance_mode("dark")
 customtkinter.set_default_color_theme("dark-blue")
 
 root = customtkinter.CTk()
 root.geometry("1920x1080")
-
-data_file = "user_data.json"  # JSON file to save data
 
 classListCounter = 0
 
@@ -17,8 +36,8 @@ classListArray = []
 
 def load_data():
     #Load data from JSON file
-    if os.path.exists("user_data.json"):
-        with open("user_data.json", "r") as f:
+    if os.path.exists(json_file_path):
+        with open(json_file_path, "r") as f:
             data = json.load(f)
             for key, value in data.items():
                 createClass() # Create a class for each value set in the JSON file
@@ -66,7 +85,7 @@ def on_closing():
             "grades": grades,
             "weights": weights
         }
-    with open("user_data.json", "w") as f:
+    with open(json_file_path, "w") as f:
         json.dump(dataToSave, f)
     root.destroy()
 
