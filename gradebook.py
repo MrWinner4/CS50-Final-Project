@@ -4,6 +4,7 @@ import os
 import sys
 from pathlib import Path
 
+
 def get_data_path():
     app_name = "Gradebook"
     app_support_dir = Path.home() / "Library" / "Application Support" / app_name
@@ -18,21 +19,31 @@ print(f"Using JSON file path: {json_file_path}")
 print(f"Checking if JSON file exists: {os.path.exists(json_file_path)}")
 
 
-
-
-
-
-
 customtkinter.set_appearance_mode("dark")
 customtkinter.set_default_color_theme("dark-blue")
 
 root = customtkinter.CTk()
 root.geometry("1920x1080")
 
+
 classListCounter = 0
 
 classList = {}
 classListArray = []
+classListAverage = {}  # Dictionary to hold classAverage labels by index
+
+#add total GPA label
+totalGPA = customtkinter.CTkLabel(master = root, text = "GPA unweighted: 0.0", text_color = "white",  font=("Inter Medium", 25),)
+totalGPA.place(relx = .50, rely = .925, anchor = "s")
+
+#Calculate total GPA button
+def calcTotalGPA():
+    global totalGPA
+    totalPoints = 0.0
+    for i in range(classListCounter):
+        totalPoints += calcClassGPANoText(i)
+    unweightedGPA = (totalPoints / classListCounter)
+    totalGPA.configure(text = f"GPA unweighted: { unweightedGPA:.2f}")
 
 def load_data():
     #Load data from JSON file
@@ -66,6 +77,11 @@ def load_data():
                         # Load weight if present or insert empty string
                         weight_value = weights[i] if i < len(weights) else ""
                         entry_widgets[2].insert(0, weight_value)  # Enter weight value from JSON
+                classAverage = classListAverage[classIndex]
+                calcClassGPA(classIndex, classAverage)
+                calcTotalGPA()
+                
+        
     else:
         createClass()
 
@@ -144,6 +160,7 @@ def createClass():
         #Show text for averages
         classAverageText = customtkinter.CTkLabel(master = classFrame, text = "Class Average:", font=("Inter Medium", 15))
         classAverage = customtkinter.CTkLabel(master = classFrame, text = "0.0", font=("Inter Medium", 15))
+        classListAverage[classListCounter] = classAverage
         classAverageText.grid(row = classFrameColumns + 3, column = 1, padx = 10, pady = 10)
         classAverage.grid(row = classFrameColumns + 3, column = 2, padx = 10, pady = 10)
         #Show button to calculate average
@@ -205,18 +222,9 @@ classesFrame.pack()
 
 load_data()
 
-#add total GPA label
-totalGPA = customtkinter.CTkLabel(master = root, text = "GPA unweighted: 0.0", text_color = "white",  font=("Inter Medium", 25),)
-totalGPA.place(relx = .50, rely = .925, anchor = "s")
 
-#Calculate total GPA button
-def calcTotalGPA():
-    global totalGPA
-    totalPoints = 0.0
-    for i in range(classListCounter):
-        totalPoints += calcClassGPANoText(i)
-    unweightedGPA = (totalPoints / classListCounter)
-    totalGPA.configure(text = f"GPA unweighted: { unweightedGPA:.2f}") 
+
+ 
 
 #add class button
 addClassButton = customtkinter.CTkButton(master=root, text="Add", text_color = "white",  font=("Inter Medium", 11),
