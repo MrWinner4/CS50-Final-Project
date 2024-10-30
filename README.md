@@ -2,9 +2,7 @@
 #### Video Demo:  <https://youtu.be/VmKcy3PQ7kQ>
 
 ### Download Mac: 
-#### Apple Silicon: <https://drive.google.com/file/d/1ivb5jMoeGTLTTp5gya3_NzKuvOmJ7uoD/view?usp=sharing>
-
-#### Apple (Intel) <https://drive.google.com/file/d/1QmBsIyOvZSZas4Cn0QhE10ql9hpxxrqJ/view?usp=sharing>
+#### Apple Download (Apple Silicon or Intel) : <https://drive.google.com/drive/folders/1YWiGZtyHOu93VHwXHzRVgIt73gWMxoBZ?usp=sharing>
 
 ## What does it do?
 #### Well, the gradebook sounds exactly like what it is: it's a gradebook. It keeps track of grades, calculates averages, and calculates your total GPA. While most schools provide this, my school has recently stopped providing the ability to calculate the total average, and I have been doing it with spreadsheets, which was getting old. It was one of my first ideas for this project, and I think I will be able to use it in life quite a bit!

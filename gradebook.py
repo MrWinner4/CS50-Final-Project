@@ -243,5 +243,7 @@ deleteClassButton = customtkinter.CTkButton(master=root, text="Delete", text_col
                                         height = 30, command = deleteClass)
 deleteClassButton.place(relx=0.60, rely = .975, anchor = "s")
 
+#Lifts the total GPA to be like an overlay over the classes
+totalGPA.lift()
 #Hurray!
 root.mainloop()
