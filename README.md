@@ -1,7 +1,7 @@
 # GRADEBOOK
 #### Video Demo:  <https://youtu.be/VmKcy3PQ7kQ>
 
-### Download Mac: 
+### Download Mac & Windows: 
 #### Apple Download (Apple Silicon or Intel) : <https://drive.google.com/drive/folders/1YWiGZtyHOu93VHwXHzRVgIt73gWMxoBZ?usp=sharing>
 
 ## What does it do?
