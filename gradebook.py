@@ -282,5 +282,7 @@ deleteClassButton.place(relx=0.60, rely = .975, anchor = "s")
 #Calculate the total GPAs on load
 calcTotalGPA()
 
+#Lifts the total GPA to be like an overlay over the classes
+totalGPA.lift()
 #Hurray!
 root.mainloop()
