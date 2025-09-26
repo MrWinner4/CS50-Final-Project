@@ -45,12 +45,21 @@ def load_data():
                 #Set class name
                 classNameEntry = classFrame.children["!ctkentry"]
                 classNameEntry.insert(0, value["className"]) # Class name entry
-                
+
+                # Set the checkbox state for isHonors
+                isHonors = value.get("isHonors", False)
+                honorsCheckbox = classFrame.children["!ctkcheckbox"]
+                if isHonors:
+                    honorsCheckbox.select()
+                else:
+                    honorsCheckbox.deselect()
+
                 classIndex = classListCounter - 1 # Access previous index
 
                 grades = value.get("grades", [])
                 gradeCategories = value.get("gradeCategories", [])
                 weights = value.get("weights", [])
+                
 
                 for i in range(max(len(grades), len(gradeCategories), len(weights))):
                     if i < len(classListArray[classIndex]):  # Ensure no out of bounds
@@ -69,21 +78,24 @@ def load_data():
     else:
         createClass()
 
+
 def on_closing():
     #When the app is closed
     dataToSave = {}
-    for i in range(classListCounter):
+    for i in range(classListCounter): #For each class
         classData = classListArray[i]
         className = classData[0]["className"].get() #Class name from 1st entry of JSON
-        grades = [entry[1].get() for entry in classData[1:]] #Get the grades from entries of this class
-        weights = [entry[2].get() for entry in classData[1:]] #Get weights from entries of this class
-        gradeCategories = [entry[0].get() for entry in classData[1:]] #Get gradeCategories from entries of this class
+        grades = [entry[1].get() for entry in classData[1:-1]] #Get the grades from entries of this class
+        weights = [entry[2].get() for entry in classData[1:-1]] #Get weights from entries of this class
+        gradeCategories = [entry[0].get() for entry in classData[1:-1]] #Get gradeCategories from entries of this class
+        isHonors = classData[-1].get()  # Get the honors checkbox state
         
         dataToSave[f"class_{i}"] = { # For this class in the dataToSave dictionary
             "className": className,
             "gradeCategories": gradeCategories,
             "grades": grades,
-            "weights": weights
+            "weights": weights,
+            "isHonors": isHonors
         }
     with open(json_file_path, "w") as f:
         json.dump(dataToSave, f)
@@ -120,13 +132,14 @@ def createClass():
             gradeCategory = customtkinter.CTkEntry(master = classFrame, font=("Inter Medium", 11), width = 100)
             grade = customtkinter.CTkEntry(master = classFrame, placeholder_text="Grade", width = 50,font=("Inter Medium", 11), validate="key", validatecommand=(root.register(validate_number_input), "%S")) #Makes sure input is a number only
             gradeWeight = customtkinter.CTkEntry(master = classFrame, placeholder_text="Weight", width = 50, font=("Inter Medium", 11), validate="key", validatecommand=(root.register(validate_number_input), "%S")) #Makes sure input is a number only
-
+            
             #Add them to 2d array
-            row_entries.append(gradeCategory)
-            row_entries.append(grade)
-            row_entries.append(gradeWeight)
+            row_entries.append(gradeCategory) #0
+            row_entries.append(grade) #1
+            row_entries.append(gradeWeight) #2
             #add row_entries to entry_grid
-            classArray.append(row_entries)
+            classArray.append(row_entries) # 5 rows of 3 entries each
+            
 
             #Put them on the screen
             gradeCategory.grid(row = classFrameColumns + 2, column = 0, padx = 5, pady = 7)
@@ -135,6 +148,8 @@ def createClass():
             
             #Increment column Amount(i)
             classFrameColumns += 1
+        honorsClassCheckbox = customtkinter.CTkCheckBox(master = classFrame, text = "", font=("Inter Medium", 13))
+        classArray.append(honorsClassCheckbox) # [5,0]?
         #Show class name entry  field
         className.grid(row = 0, column = 0, columnspan = 3, padx= 10, pady = 10, sticky="ew")
         #Show header for entry fields
@@ -148,6 +163,9 @@ def createClass():
         classAverage.grid(row = classFrameColumns + 3, column = 2, padx = 10, pady = 10)
         #Show button to calculate average
         calculateAverageButton.grid(row = classFrameColumns + 3, column = 0, padx = 10, pady = 20)
+        honorsClass = customtkinter.CTkLabel(master = classFrame, text = "Honors Class:", font=("Inter Medium", 13))
+        honorsClass.grid(row = classFrameColumns + 4, column = 0, padx = 10, pady = 10)
+        honorsClassCheckbox.grid(row = classFrameColumns + 4, column = 1, padx = 10, pady = 10)
         #Put the 2d array of entry fields into a larger array
         classListArray.append(classArray)
         #Increment classList
@@ -170,18 +188,22 @@ def deleteClass():
         classListArray.pop()  # Remove the last class entry data
 
 #Class GPA for calculating total GPA
-def calcClassGPANoText(classNumber):
+def calcClassGPANoText(classNumber, isWeighted):
     totalPoints = 0
     totalWeight = 0
     for i in range(5): #For each column
-        for entry in classListArray[classNumber][1:]: # For each entry field in this class's columns
+        for entry in classListArray[classNumber][1:-1]: # For each entry field in this class's columns
             grade = entry[1].get()
             weight = entry[2].get()
             if grade and weight:  # Check if both fields have values
-                totalPoints += float(grade) * (float(weight) / 100)
+                totalPoints += float(grade) * (float(weight) / 100) 
                 totalWeight += float(weight)
     if totalWeight > 0: # If there is weight
-        gpa = totalPoints / (totalWeight / 100) #calculate gpa
+        isHonors =classListArray[classNumber][-1].get()
+        if isHonors and isWeighted: # Add 7 to the gpa if is honors
+            gpa = (totalPoints / (totalWeight / 100)) + 7 #calculate gpa with weighted honors
+        else:
+            gpa = totalPoints / (totalWeight / 100) #calculate gpa
         return gpa
     return 0.0
 
@@ -190,7 +212,7 @@ def calcClassGPA(classNumber, classAverage):
     totalPoints = 0
     totalWeight = 0
     for i in range(5): #For each column
-        for entry in classListArray[classNumber][1:]: # For each entry field in this class's columns
+        for entry in classListArray[classNumber][1:-1]: # For each entry field in this class's columns
             grade = entry[1].get()
             weight = entry[2].get()
             if grade and weight:  # Check if both fields have values
@@ -206,17 +228,22 @@ classesFrame.pack()
 load_data()
 
 #add total GPA label
-totalGPA = customtkinter.CTkLabel(master = root, text = "GPA unweighted: 0.0", text_color = "white",  font=("Inter Medium", 25),)
+totalGPA = customtkinter.CTkLabel(master = root, text = "GPA unweighted: 0.0 \nGPA weighted: 0.0", text_color = "white",  font=("Inter Medium", 25),)
 totalGPA.place(relx = .50, rely = .925, anchor = "s")
+
+
 
 #Calculate total GPA button
 def calcTotalGPA():
     global totalGPA
     totalPoints = 0.0
+    totalWeightedPoints = 0.0
     for i in range(classListCounter):
-        totalPoints += calcClassGPANoText(i)
+        totalPoints += calcClassGPANoText(i, False)
+        totalWeightedPoints += calcClassGPANoText(i, True)
     unweightedGPA = (totalPoints / classListCounter)
-    totalGPA.configure(text = f"GPA unweighted: { unweightedGPA:.2f}") 
+    weightedGPA = (totalWeightedPoints / classListCounter)
+    totalGPA.configure(text = f"GPA unweighted: { unweightedGPA:.2f} \nGPA weighted: { weightedGPA:.2f}")
 
 #add class button
 addClassButton = customtkinter.CTkButton(master=root, text="Add", text_color = "white",  font=("Inter Medium", 11),
@@ -234,6 +261,9 @@ deleteClassButton = customtkinter.CTkButton(master=root, text="Delete", text_col
                                         fg_color= "#FFB3B3", hover_color = "#FF6666", corner_radius = 5, width = 75,
                                         height = 30, command = deleteClass)
 deleteClassButton.place(relx=0.60, rely = .975, anchor = "s")
+
+#Calculate the total GPAs on load
+calcTotalGPA()
 
 #Hurray!
 root.mainloop()
