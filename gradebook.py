@@ -4,7 +4,6 @@ import os
 import sys
 from pathlib import Path
 
-
 def get_data_path():
     app_name = "Gradebook"
     app_support_dir = Path.home() / "Library" / "Application Support" / app_name
@@ -19,31 +18,23 @@ print(f"Using JSON file path: {json_file_path}")
 print(f"Checking if JSON file exists: {os.path.exists(json_file_path)}")
 
 
+
+
+
+
+
 customtkinter.set_appearance_mode("dark")
 customtkinter.set_default_color_theme("dark-blue")
 
 root = customtkinter.CTk()
+root.title("Gradebook")
+root.iconbitmap("IconGradebook.ico")
 root.geometry("1920x1080")
-
 
 classListCounter = 0
 
 classList = {}
 classListArray = []
-classListAverage = {}  # Dictionary to hold classAverage labels by index
-
-#add total GPA label
-totalGPA = customtkinter.CTkLabel(master = root, text = "GPA unweighted: 0.0", text_color = "white",  font=("Inter Medium", 25),)
-totalGPA.place(relx = .50, rely = .925, anchor = "s")
-
-#Calculate total GPA button
-def calcTotalGPA():
-    global totalGPA
-    totalPoints = 0.0
-    for i in range(classListCounter):
-        totalPoints += calcClassGPANoText(i)
-    unweightedGPA = (totalPoints / classListCounter)
-    totalGPA.configure(text = f"GPA unweighted: { unweightedGPA:.2f}")
 
 def load_data():
     #Load data from JSON file
@@ -86,11 +77,7 @@ def load_data():
                         # Load weight if present or insert empty string
                         weight_value = weights[i] if i < len(weights) else ""
                         entry_widgets[2].insert(0, weight_value)  # Enter weight value from JSON
-                classAverage = classListAverage[classIndex]
-                calcClassGPA(classIndex, classAverage)
-                calcTotalGPA()
-                
-        
+                classListArray[classIndex][-2].invoke() # Click the calculate button to update average
     else:
         createClass()
 
@@ -101,9 +88,9 @@ def on_closing():
     for i in range(classListCounter): #For each class
         classData = classListArray[i]
         className = classData[0]["className"].get() #Class name from 1st entry of JSON
-        grades = [entry[1].get() for entry in classData[1:-1]] #Get the grades from entries of this class
-        weights = [entry[2].get() for entry in classData[1:-1]] #Get weights from entries of this class
-        gradeCategories = [entry[0].get() for entry in classData[1:-1]] #Get gradeCategories from entries of this class
+        grades = [entry[1].get() for entry in classData[1:-2]] #Get the grades from entries of this class
+        weights = [entry[2].get() for entry in classData[1:-2]] #Get weights from entries of this class
+        gradeCategories = [entry[0].get() for entry in classData[1:-2]] #Get gradeCategories from entries of this class
         isHonors = classData[-1].get()  # Get the honors checkbox state
         
         dataToSave[f"class_{i}"] = { # For this class in the dataToSave dictionary
@@ -164,6 +151,7 @@ def createClass():
             
             #Increment column Amount(i)
             classFrameColumns += 1
+        classArray.append(calculateAverageButton)
         honorsClassCheckbox = customtkinter.CTkCheckBox(master = classFrame, text = "", font=("Inter Medium", 13))
         classArray.append(honorsClassCheckbox) # [5,0]?
         #Show class name entry  field
@@ -175,7 +163,6 @@ def createClass():
         #Show text for averages
         classAverageText = customtkinter.CTkLabel(master = classFrame, text = "Class Average:", font=("Inter Medium", 15))
         classAverage = customtkinter.CTkLabel(master = classFrame, text = "0.0", font=("Inter Medium", 15))
-        classListAverage[classListCounter] = classAverage
         classAverageText.grid(row = classFrameColumns + 3, column = 1, padx = 10, pady = 10)
         classAverage.grid(row = classFrameColumns + 3, column = 2, padx = 10, pady = 10)
         #Show button to calculate average
@@ -209,7 +196,7 @@ def calcClassGPANoText(classNumber, isWeighted):
     totalPoints = 0
     totalWeight = 0
     for i in range(5): #For each column
-        for entry in classListArray[classNumber][1:-1]: # For each entry field in this class's columns
+        for entry in classListArray[classNumber][1:-2]: # For each entry field in this class's columns
             grade = entry[1].get()
             weight = entry[2].get()
             if grade and weight:  # Check if both fields have values
@@ -229,7 +216,7 @@ def calcClassGPA(classNumber, classAverage):
     totalPoints = 0
     totalWeight = 0
     for i in range(5): #For each column
-        for entry in classListArray[classNumber][1:-1]: # For each entry field in this class's columns
+        for entry in classListArray[classNumber][1:-2]: # For each entry field in this class's columns
             grade = entry[1].get()
             weight = entry[2].get()
             if grade and weight:  # Check if both fields have values
@@ -282,7 +269,5 @@ deleteClassButton.place(relx=0.60, rely = .975, anchor = "s")
 #Calculate the total GPAs on load
 calcTotalGPA()
 
-#Lifts the total GPA to be like an overlay over the classes
-totalGPA.lift()
 #Hurray!
 root.mainloop()
